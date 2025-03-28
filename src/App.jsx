@@ -12,18 +12,13 @@ import { devLog } from "./utils/logger";
 
 function App() {
   const { settings, updateSetting, resetSettings, handlePasswordTypeChange, getMinLength, loaded } = usePasswordSettings();
-  const { password, setPassword, passwordStrength, copied, setCopied, generatePassword, getStrengthInfo, copyToClipboard, loading } = usePasswordGenerator(settings, loaded);
-  const { passwordHistory, isHistoryVisible, setIsHistoryVisible, savePassword, useFromHistory, clearHistory } = usePasswordHistory(settings.passwordType);
+  const { password, passwordStrength, copied, getStrengthInfo, copyToClipboard, loading } = usePasswordGenerator(settings, loaded);
+  const { passwordHistory, isHistoryVisible, setIsHistoryVisible, savePassword, clearHistory } = usePasswordHistory(settings.passwordType);
 
   // Connect the usePasswordHistory savePassword method to the current password
   const handleSavePassword = () => {
     savePassword(password, passwordStrength);
   };
-
-  /*   // Connect the usePasswordHistory useFromHistory method to setPassword and setCopied
-  const handleUseFromHistory = (historyPassword) => {
-    useFromHistory(historyPassword, setPassword, setCopied);
-  }; */
 
   // Change password type and trigger regenerate
   const changePasswordType = (type) => {
@@ -44,28 +39,38 @@ function App() {
   }, [settings, loaded]);
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
+    <main className="min-h-screen bg-background text-foreground flex items-center justify-center p-4">
       <Toaster position="bottom-right" richColors={false} />
 
       <Card className="w-full max-w-md mx-auto border-border">
         <CardContent className="pt-6">
-          <h2 className="text-2xl font-bold text-center mb-6 text-foreground">Password Generator</h2>
+          <header>
+            <h1 className="text-2xl font-bold text-center mb-6 text-foreground">Password Generator</h1>
+          </header>
 
-          <PasswordOutput password={password} onCopy={copyToClipboard} copied={copied} passwordStrength={passwordStrength} getStrengthInfo={getStrengthInfo} loading={loading} />
-          <StrengthMeter strength={passwordStrength} />
-          <SettingsForm
-            settings={settings}
-            updateSetting={updateSetting}
-            handlePasswordTypeChange={changePasswordType}
-            savePassword={handleSavePassword}
-            resetSettings={resetSettings}
-            minLength={getMinLength()}
-            maxLength={24}
-          />
-          <PasswordHistory passwordHistory={passwordHistory} showHistory={isHistoryVisible} setShowHistory={setIsHistoryVisible} clearHistory={clearHistory} />
+          <section aria-label="Password Output">
+            <PasswordOutput password={password} onCopy={copyToClipboard} copied={copied} passwordStrength={passwordStrength} getStrengthInfo={getStrengthInfo} loading={loading} />
+            <StrengthMeter strength={passwordStrength} />
+          </section>
+
+          <section aria-label="Password Settings">
+            <SettingsForm
+              settings={settings}
+              updateSetting={updateSetting}
+              handlePasswordTypeChange={changePasswordType}
+              savePassword={handleSavePassword}
+              resetSettings={resetSettings}
+              minLength={getMinLength()}
+              maxLength={24}
+            />
+          </section>
+
+          <section aria-label="Password History">
+            <PasswordHistory passwordHistory={passwordHistory} showHistory={isHistoryVisible} setShowHistory={setIsHistoryVisible} clearHistory={clearHistory} />
+          </section>
         </CardContent>
       </Card>
-    </div>
+    </main>
   );
 }
 
